@@ -58,18 +58,16 @@ class RoadSegDataset(Dataset):
 
         if index in self.train_ids:
             return transforms.Compose([
-                transforms.RandomHorizontalFlip(),
-                transforms.RandomVerticalFlip(),
-                transforms.RandomRotation(degrees=(0, 90)),
+                #transforms.RandomHorizontalFlip(),
+                #transforms.RandomVerticalFlip(),
+                #transforms.RandomRotation(degrees=(0, 90)),
                 transforms.ToTensor(),
-                transforms.Normalize([0.33298134, 0.33009373, 0.29579783],
-                                     [0.19390678, 0.18714967, 0.18701911])
+                #transforms.Normalize([0.33298134, 0.33009373, 0.29579783],[0.19390678, 0.18714967, 0.18701911])
             ])
         else:  # For validation and test images, no augmentation is applied
             return transforms.Compose([
                 transforms.ToTensor(),
-                transforms.Normalize([0.33298134, 0.33009373, 0.29579783],
-                                     [0.19390678, 0.18714967, 0.18701911])
+                #transforms.Normalize([0.33298134, 0.33009373, 0.29579783],[0.19390678, 0.18714967, 0.18701911])
             ])
 
     def get_mask_transform(self, index):
@@ -81,9 +79,9 @@ class RoadSegDataset(Dataset):
 
         if index in self.train_ids:
             return transforms.Compose([
-                transforms.RandomHorizontalFlip(),
-                transforms.RandomVerticalFlip(),
-                transforms.RandomRotation(degrees=(0, 90)),
+                #transforms.RandomHorizontalFlip(),
+                #transforms.RandomVerticalFlip(),
+                #transforms.RandomRotation(degrees=(0, 90)),
                 transforms.ToTensor(),
             ])
         else:  # For validation and test images, no augmentation is applied

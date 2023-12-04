@@ -3,7 +3,7 @@ import copy
 
 
 def train_fn(train_loader, train_size, val_loader, val_size, device, model, criterion, optimizer, scheduler, num_epochs,
-             save_path, save_model, fold):
+             save_path, save_model, fold, run):
     best_model_wts = copy.deepcopy(model.state_dict())
     min_loss = float('inf')
     best_epoch = 0
@@ -38,8 +38,6 @@ def train_fn(train_loader, train_size, val_loader, val_size, device, model, crit
                 # Track history if only in train
                 with torch.set_grad_enabled(phase == 'train'):
                     outputs = model(inputs).squeeze()
-                    print (f'pred shape : {outputs.shape}')
-                    print(f'mask shape : {masks.shape}')
                     loss = criterion(outputs, masks)
 
                     # Backward + optimize only if in training phase
@@ -56,6 +54,9 @@ def train_fn(train_loader, train_size, val_loader, val_size, device, model, crit
             epoch_loss = running_loss / (train_size if phase == 'train' else val_size)
 
             print('{} Loss: {:.4f}'.format(phase, epoch_loss))
+
+            run[f"fold_{fold}/{phase}/loss"].log(epoch_loss)
+
 
             # Deep copy the model
             if phase == 'val' and epoch_loss < min_loss:

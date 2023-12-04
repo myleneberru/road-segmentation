@@ -97,6 +97,7 @@ class Unet(nn.Module) :
         """ Classifier """
 
         outputs = self.outputs(d4)
+        outputs = torch.sigmoid(outputs)
         return outputs
 
 if __name__ == "__main__" :
