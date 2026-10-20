@@ -1,91 +1,81 @@
-# Road Segmentation — U-Net vs Foundation Models
+
+# Road Segmentation — U-Net with K-Fold Cross-Validation
 
 ![Python](https://img.shields.io/badge/Python-3.9+-blue?logo=python)
 ![PyTorch](https://img.shields.io/badge/PyTorch-2.0-orange?logo=pytorch)
 ![EPFL](https://img.shields.io/badge/EPFL-CS--433-red)
-![F1 Score](https://img.shields.io/badge/F1%20Score-89.2%25-brightgreen)
+![Colab](https://img.shields.io/badge/Trained%20on-Google%20Colab%20T4-yellow?logo=googlecolab)
 
-Semantic segmentation of aerial road imagery using a fine-tuned U-Net architecture, outperforming SAM (Segment Anything Model) on this domain-specific task.
+Binary semantic segmentation of aerial road imagery using a U-Net architecture trained with 2-fold cross-validation.
 
-**Team:** Mylène Berruyer · Ghalia Bennani · Mehdi Hajoub — EPFL CS-433 Machine Learning, 2023
+**Team:** Mylène Berruyer · Ghalia Bennani · Mehdi Hajoub — EPFL CS-433, 2023
 
 ---
 
-## Results
+## Results (2-Fold Cross-Validation)
 
-| Model | F1 Score | Accuracy | Notes |
-|-------|----------|----------|-------|
-| **U-Net (ours)** | **89.2%** | **94.1%** | Iterative transfer learning |
-| SAM (ViT-H, zero-shot) | ~82% | ~89% | No fine-tuning |
-| U-Net from scratch | ~85% | ~91% | Baseline |
+| Metric | Mean | Std |
+|--------|------|-----|
+| **F1 Score** | **0.826** | ±0.024 |
+| **Pixel Accuracy** | **0.924** | ±0.011 |
+| IoU | 0.705 | ±0.035 |
+| Dice | 0.826 | ±0.024 |
+| Avg inference time | 0.45s / image | ±0.10 |
 
-> **Key finding:** Task-specific transfer learning with alternating learning rates outperforms a general-purpose foundation model (SAM) on narrow aerial imagery domains.
+Best checkpoint: `model_epoch39_fold_0.pth` (val loss 0.2745)
 
 ---
 
 ## Method
 
 ### Architecture
-U-Net with pretrained encoder backbone, fine-tuned end-to-end on aerial road imagery.
+U-Net trained end-to-end on 400×400 aerial RGB images with binary road masks.
 
-### Training Strategy — Iterative Transfer Learning
-- **Phase 1:** Train decoder only (encoder frozen) — lr = 1e-4
-- **Phase 2:** Fine-tune full network — lr = 1e-5
-- Alternating between phases until convergence
-
-### Data Augmentation
-- 45° rotation (key for road detection in all orientations)
-- Horizontal and vertical flips
-- Brightness/contrast jitter
+### Training Setup
+- **Optimizer:** Adam (lr = 1e-4)
+- **Scheduler:** CosineAnnealingLR (T_max = 50 epochs)
+- **Loss:** Binary Cross-Entropy
+- **Batch size:** 10 | **Epochs:** 50 | **Folds:** 2
+- **Hardware:** Google Colab T4 GPU
 
 ---
 
-## Demo
-
-Run inference on a single image:
+## Run Inference
 
 ```bash
-python run.py --input path/to/image.png --output predictions/
+# 1. Set up environment
+conda env create -f environment.yml
+conda activate road-seg
+
+# 2. Place your model checkpoint at:
+#    source_code/models/unet/Results/model_epoch39_fold_0.pth
+
+# 3. Run prediction on the 50 test images
+python run.py
+# Predictions saved to: source_code/models/unet/Results/preds/
+# Submission file:      dummy_submission.csv
 ```
-
-Or explore the full evaluation pipeline in the notebook:
-
-```bash
-jupyter notebook test_models.ipynb
-```
-
-The notebook walks through:
-1. Loading pretrained weights
-2. Running inference on test images
-3. Comparing U-Net vs SAM predictions side by side
-4. Computing F1 and accuracy metrics
 
 ---
 
 ## Project Structure
 
+```
 road-segmentation/
-├── models/ # Model architectures (U-Net, baselines)
-├── utils/ # Data loading, augmentation, metrics
-├── run.py # Training & inference entry point
-├── helpers.py # Utility functions
-├── test_models.ipynb # Evaluation notebook & visual results
-├── environment.yml # Conda environment
-└── Project_2-3.pdf # Full report
-
-
----
-
-## Installation
-
-```bash
-conda env create -f environment.yml
-conda activate road-seg
-python run.py
+├── models/
+│   └── unet/
+│       └── unet_class.py        # U-Net architecture
+├── utils/
+│   └── mask_to_submission.py    # AICrowd submission formatter
+├── run.py                       # Inference entry point
+├── helpers.py                   # Preprocessing & utilities
+├── environment.yml              # Conda environment
+└── Project_2-3.pdf              # Full report with ablation study
 ```
 
 ---
 
 ## Report
 
-The full project report (methodology, ablation study, error analysis) is available as [`Project_2-3.pdf`](./Project_2-3.pdf).
+Full methodology, architecture choices, training curves, and error analysis in [`Project_2-3.pdf`](./Project_2-3.pdf).
+```
