@@ -5,6 +5,8 @@
 ![PyTorch](https://img.shields.io/badge/PyTorch-2.0-orange?logo=pytorch)
 ![EPFL](https://img.shields.io/badge/EPFL-CS--433-red)
 ![Colab](https://img.shields.io/badge/Trained%20on-Google%20Colab%20T4-yellow?logo=googlecolab)
+![F1](https://img.shields.io/badge/F1%20Score-82.6%25-brightgreen)
+![Accuracy](https://img.shields.io/badge/Accuracy-92.4%25-brightgreen)
 
 Binary semantic segmentation of aerial road imagery using a U-Net architecture trained with 2-fold cross-validation.
 
@@ -12,7 +14,18 @@ Binary semantic segmentation of aerial road imagery using a U-Net architecture t
 
 ---
 
-## Results (2-Fold Cross-Validation)
+## Results 
+
+| Model | F1 Score | Accuracy | IoU |
+|-------|----------|----------|-----|
+| **U-Net (ours)** | **0.826 ± 0.024** | **0.924 ± 0.011** | **0.705 ± 0.035** |
+| SAM ViT-H (zero-shot) | 0.767 | 0.891 | 0.623 |
+| U-Net from scratch | 0.798 | 0.907 | 0.670 |
+
+> **Key finding:** Task-specific fine-tuning with CosineAnnealingLR outperforms a zero-shot foundation model (SAM) on narrow aerial imagery — demonstrating that domain adaptation beats general-purpose models for specialized segmentation tasks.
+
+### Results (2-Fold Cross-Validation)
+
 
 | Metric | Mean | Std |
 |--------|------|-----|
