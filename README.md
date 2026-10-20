@@ -37,6 +37,13 @@ Binary semantic segmentation of aerial road imagery using a U-Net architecture t
 
 Best checkpoint: `model_epoch39_fold_0.pth` (val loss 0.2745)
 
+## Visual Results
+
+![U-Net vs SAM predictions](assets/results.png)
+
+*Left to right: input image, probability map, binary prediction, ground truth.  
+Top: U-Net (ours) — clean road segmentation. Bottom: SAM zero-shot — fails on aerial imagery.*
+
 ---
 
 ## Method
