@@ -19,6 +19,7 @@ def binary_to_uint8(img):
     rimg = (img * 255).round().astype(np.uint8)
     return rimg
 
+
 def reconstruct_from_labels(image_id):
     im = np.zeros((imgwidth, imgheight), dtype=np.uint8)
     f = open(label_file)
